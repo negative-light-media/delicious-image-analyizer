@@ -22,14 +22,15 @@ def main():
 
     image_files = glob.glob(f"{FILE_PATH}/**/*.png", recursive=True)
 
-    images = [cv2.imread(i) for i in image_files ]
+    images = [cv2.imread(i, cv2.IMREAD_UNCHANGED) for i in image_files ]
 
     print(f"{len(image_files)} Images Read")
+
     
     mean_image = np.mean(images, axis=0)
     print(mean_image.shape)
     cv2.imwrite(OUTPUT_FILE, mean_image)
-    r,g,b = cv2.split(mean_image)
+    r,g,b,a = cv2.split(mean_image)
 
     cv2.imwrite(R_LAYER_FILE, r)
     cv2.imwrite(G_LAYER_FILE, g)
@@ -44,6 +45,8 @@ def main():
 
     cv2.imwrite(MEAN_MEDIAN_DIFF_LAYER_FILE, 4.0 * np.abs(np.mean(images, axis=0) - np.median(images, axis=0)))
     cv2.imwrite(DENOISED_FILE, cv2.fastNlMeansDenoisingColored(np.uint8(np.median(images, axis=0)), None, 15, 10, 7, 21))
+
+
 if __name__ == '__main__':
     load_dotenv()
     main()
